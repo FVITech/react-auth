@@ -1,9 +1,11 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 import { OutlinedInput } from '../../components/inputs';
 import { OutlinedButton } from '../../components/buttons';
 import { Link } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Logo from '../../images/logo.svg';
+import { USER } from '../../actions';
 
 class SignInScreen extends Component {
   state = { 
@@ -16,6 +18,10 @@ class SignInScreen extends Component {
       email: email,
       password: password
     });
+  }
+
+  onSignIn = () => {
+    this.props.onSignIn(this.state);
   }
 
   render () {
@@ -47,6 +53,7 @@ class SignInScreen extends Component {
           </div>
           
           <OutlinedButton 
+            onClick={this.onSignIn}
             text="Login"
           />
 
@@ -60,4 +67,14 @@ class SignInScreen extends Component {
   }
 } 
 
-export default SignInScreen;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    user: state.user
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return USER(dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignInScreen);

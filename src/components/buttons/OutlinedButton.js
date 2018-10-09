@@ -14,9 +14,10 @@ const styles = theme => ({
 });
 
 function OutlinedButton(props) {
-  const { classes, text } = props;
+  const { classes, text, onClick } = props;
   return (
     <Button
+      onClick={onClick}
       variant="outlined" 
       color="primary" 
       className={classes.button}>
