@@ -1,12 +1,16 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
+import { USER } from '../../actions';
 import { OutlinedInput } from '../../components/inputs';
 import { OutlinedButton } from '../../components/buttons';
 import { Link } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Logo from '../../images/logo.svg';
+import socket from '../../socket';
 
 class ForgotPasswordScreen extends Component {
   state = {
+    socket_id: socket.id,
     email: ''
   }
 
@@ -15,6 +19,16 @@ class ForgotPasswordScreen extends Component {
       email: email,
       password: password
     });
+  }
+
+  onForgotPassword = async () => {
+    const success = await this.props.onForgotPassword(this.state);
+
+    if (success) {
+      this.props.history.replace('/awaiting-email-verification', {
+        email: this.state.email
+      });
+    }
   }
 
   render() {
@@ -37,6 +51,7 @@ class ForgotPasswordScreen extends Component {
           </div>
 
           <OutlinedButton
+            onClick={this.onForgotPassword}
             text="Verify Email"
           />
 
@@ -49,4 +64,14 @@ class ForgotPasswordScreen extends Component {
   }
 }
 
-export default ForgotPasswordScreen;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    user: state.user
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return USER(dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ForgotPasswordScreen);

@@ -29,7 +29,7 @@ class WaitingEmailConfirmationScreen extends Component {
               textAlign: 'center'
             }}>
               <h3 className="text-white">Hi {this.state.name}, your email has been confirm.</h3>
-              <h3 className="text-white"><Link to="/sign-in" className="text-white">Sign in</Link></h3>
+              <h3 className="text-white"><Link to="/sign-in" className="text-white">Go to sign in screen</Link></h3>
             </div>
             
           ) : (

@@ -1,7 +1,7 @@
 import React from "react";
 
-const HomeScreen = ({ match }) => (
-  <div>
+const HomeScreen = () => (
+  <div className="screen">
     Home Screen
   </div>
 );

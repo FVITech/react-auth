@@ -33,7 +33,7 @@ class SignUpScreen extends Component {
     const success = await this.props.onSignUp(this.state);
 
     if(success) {
-      this.props.history.replace('/waiting-for-email-confirmation', {
+      this.props.history.replace('/awaiting-email-confirmation', {
         email: this.state.email
       });
     }

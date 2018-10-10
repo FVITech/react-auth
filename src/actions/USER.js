@@ -126,6 +126,68 @@ const USER = (dispatch) => ({
       })
   },
 
+  onForgotPassword: (credentials) => {
+    if (!validate.email(credentials.email)) {
+      return alert('Invalid email. Please enter a valid email')
+    }
+
+    return fetch(server + '/user-password-recovery', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: "include",
+      body: JSON.stringify(credentials)
+    })
+      .then(response => response.json())
+      .then(response => {
+        if (response.success) {
+          return true;
+        }
+        else {
+          alert(response.message);
+          return false;
+        }
+      })
+      .catch(err => {
+        alert(err.message);
+      })
+  },
+
+  onResetPassword: (credentials, token) => {
+    if (!validate.password(credentials.newPassword)) {
+      return alert('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters');
+    }
+
+    if (credentials.newPassword !== credentials.newPasswordConfirmation) {
+      return alert('Passwords do not match. Please make sure to type the same password');
+    }
+
+    return fetch(server + '/user-change-password/' + token, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: "include",
+      body: JSON.stringify(credentials)
+    })
+      .then(response => response.json())
+      .then(response => {
+        if (response.success) {
+          return true;
+        }
+        else {
+          alert(response.message);
+          return false;
+        }
+      })
+      .catch(err => {
+        alert(err.message);
+      })
+  },
+
   onUserLogOut: () => {
     return fetch(server + '/user-sign-out', {
       method: 'POST',
