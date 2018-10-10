@@ -1,17 +1,21 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
+import { USER } from '../../actions';
 import { OutlinedInput, OutlinedSelect, DateSelector } from '../../components/inputs';
 import { OutlinedButton } from '../../components/buttons';
 import { Link } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Logo from '../../images/logo.svg';
 import moment from 'moment';
+import socket from '../../socket';
 
 class SignUpScreen extends Component {
   state = {
+    socket_id: socket.id,
     email: '',
     password: '',
     name: '',
-    birthday: moment(),
+    birthday: moment().subtract(13, 'years'),
     gender: ''
   }
 
@@ -25,9 +29,19 @@ class SignUpScreen extends Component {
     });
   }
 
+  onSignUp = async () => {
+    const success = await this.props.onSignUp(this.state);
+
+    if(success) {
+      this.props.history.replace('/waiting-for-email-confirmation', {
+        email: this.state.email
+      });
+    }
+  }
+
   render() {
     return (
-      <div className="sign-in-screen">
+      <div className="screen">
         <Paper className="form-container" elevation={1}>
           <div className="logo-container">
             <img src={Logo} height="200" width="200" alt="logo" />
@@ -75,6 +89,7 @@ class SignUpScreen extends Component {
               label="Birthday"
               placeholder="Enter Birthday"
               value={this.state.birthday}
+              maxDate={moment().subtract(13, 'years')}
               onChange={(date) => this.onChange({
                 ...this.state,
                 birthday: date
@@ -105,7 +120,8 @@ class SignUpScreen extends Component {
           </div>
 
           <OutlinedButton
-            text="Login"
+            onClick={this.onSignUp}
+            text="Sign Up"
           />
 
           <div className="links-container">
@@ -117,4 +133,14 @@ class SignUpScreen extends Component {
   }
 }
 
-export default SignUpScreen;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    user: state.user
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return USER(dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen);

@@ -1,20 +1,43 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { HomeScreen, SignInScreen, SignUpScreen, ForgotPasswordScreen, ResetPasswordScreen } from './screens';
+import { connect } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { Loading } from './components/Indicators';
+import { 
+  HomeScreen, 
+  SignInScreen, 
+  SignUpScreen, 
+  ForgotPasswordScreen, 
+  ResetPasswordScreen, 
+  WaitingEmailConfirmationScreen 
+} from './screens';
 
-const Routes = () => (
-  <Router>
-    <div>
-      <Switch>
-        <Route exact path="/sign-in" component={SignInScreen} />
-        <Route exact path="/sign-up" component={SignUpScreen} />
-        <Route exact path="/forgot-password" component={ForgotPasswordScreen} />
-        <Route exact path="/reset-password" component={ResetPasswordScreen} />
-        
-        <Route path="/" component={HomeScreen} />
-      </Switch>
-    </div>
-  </Router>
-);
+const Routes = (props) => {
+  const { user } = props;
 
-export default Routes;
+  return props.indicators.loading ? <Loading /> : (
+    <Router>
+      <div>
+        <Switch>
+          <Route exact path="/sign-in" render={(props) => !user ? <SignInScreen {...props}/> : <Redirect to="/home" />} />
+          <Route exact path="/sign-up" render={(props) => !user ? <SignUpScreen {...props} /> : <Redirect to="/home" />} />
+          <Route exact path="/forgot-password" render={(props) => !user ? <ForgotPasswordScreen {...props} /> : <Redirect to="/home" />} />
+          <Route exact path="/reset-password" render={(props) => !user ? <ResetPasswordScreen {...props} /> : <Redirect to="/home" />} />
+          <Route exact path="/waiting-for-email-confirmation" render={(props) => !user ? <WaitingEmailConfirmationScreen {...props} /> : <Redirect to="/home" />} />
+
+
+          <Route exact path="/home" render={(props) => user ? <HomeScreen {...props} /> : <Redirect to="/sign-in" />} />
+          
+          <Route path="/" render={(props) => user ? <Redirect to="/home" /> : <Redirect to="/sign-in" /> }/>
+        </Switch>
+      </div>
+    </Router>
+)};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    user: state.user,
+    indicators: state.indicators
+  }
+}
+
+export default connect(mapStateToProps)(Routes);

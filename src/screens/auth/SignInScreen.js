@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
+import { USER } from '../../actions';
 import { OutlinedInput } from '../../components/inputs';
 import { OutlinedButton } from '../../components/buttons';
 import { Link } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Logo from '../../images/logo.svg';
-import { USER } from '../../actions';
 
 class SignInScreen extends Component {
   state = { 
@@ -26,7 +26,7 @@ class SignInScreen extends Component {
 
   render () {
     return (
-      <div className="sign-in-screen">
+      <div className="screen">
         <Paper className="form-container" elevation={1}>
           <div className="logo-container">
             <img src={Logo} height="200" width="200" alt="logo" />

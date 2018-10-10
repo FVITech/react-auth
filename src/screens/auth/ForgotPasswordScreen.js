@@ -19,7 +19,7 @@ class ForgotPasswordScreen extends Component {
 
   render() {
     return (
-      <div className="sign-in-screen">
+      <div className="screen">
         <Paper className="form-container" elevation={1}>
           <div className="logo-container">
             <img src={Logo} height="200" width="200" alt="logo" />

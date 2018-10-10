@@ -1,7 +1,55 @@
 import { server } from '../api';
 import validate from '../methods/validate';
+import socket from '../socket';
 
 const USER = (dispatch) => ({
+  checkUserSession: () => {
+    return fetch(server + '/user-session', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: "include",
+      body: JSON.stringify({ socket_id: socket.id }),
+    })
+      .then(response => response.json())
+      .then(response => {
+
+        if (response.user) {
+          dispatch({
+            type: 'ON_UPDATE_USER',
+            user: response.user
+          });
+        }
+        else {
+          dispatch({
+            type: 'ON_UPDATE_USER',
+            user: null
+          });
+        }
+
+        setTimeout(() => {
+          dispatch({
+            type: 'ON_LOADING_CHANGE',
+            loading: false
+          });
+        }, 3000);
+      })
+      .catch(error => {
+        if (error) {
+          console.error(error);
+        }
+
+        setTimeout(() => {
+          dispatch({
+            type: 'ON_LOADING_CHANGE',
+            loading: false
+          });
+        }, 3000);
+      });
+  },
+
   onSignIn: (credentials) => {
     if (!validate.email(credentials.email)) {
       return alert('Invalid email. Please enter a valid email')
@@ -11,7 +59,7 @@ const USER = (dispatch) => ({
       return alert('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters')
     }
 
-    fetch(server + '/sign-in', {
+    return fetch(server + '/user-sign-in', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -37,12 +85,77 @@ const USER = (dispatch) => ({
     })
   },
 
-  onUpdateUser: (user) => {
-    dispatch({
-      type: 'ON_UPDATE_USER',
-      user: user
+  onSignUp: (credentials) => {
+    if (!validate.email(credentials.email)) {
+      return alert('Invalid email. Please enter a valid email')
+    }
+
+    if (!validate.password(credentials.password)) {
+      return alert('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters')
+    }
+
+    if (!credentials.name) {
+      return alert('Invalid name. Please enter a name')
+    }
+
+    if (!credentials.birthday) {
+      return alert('Invalid age. Please enter a valid age')
+    }
+
+    return fetch(server + '/user-sign-up', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: "include",
+      body: JSON.stringify(credentials)
     })
-  }
+      .then(response => response.json())
+      .then(response => {
+        if (response.success) {
+          return true;
+        }
+        else {
+          alert(response.message);
+          return false;
+        }
+      })
+      .catch(err => {
+        alert(err.message);
+      })
+  },
+
+  onUserLogOut: () => {
+    return fetch(server + '/user-sign-out', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        socket_id: socket.id
+      })
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        if (response.success) {
+          dispatch({
+            type: 'ON_UPDATE_USER',
+            user: null
+          });
+        }
+        else {
+          alert(response.message);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
 });
 
 export default USER;

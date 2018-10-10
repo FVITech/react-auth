@@ -22,12 +22,16 @@ const OutlineDateSelector = (props) => {
     onChange,
     label,
     id,
+    maxDate,
+    minDate
   } = props;
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <div className={classes.root}>
         <DatePicker
+          minDate={minDate}
+          maxDate={maxDate}
           id={id}
           label={label}
           keyboard
