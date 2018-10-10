@@ -1,6 +1,7 @@
 import io from 'socket.io-client/dist/socket.io';
 import { server } from './api';
 import { USER } from './actions';
+import { alert } from './components/Alerts';
 
 const socket = io(server, { jsonp: false });
 
@@ -56,7 +57,7 @@ socket.on('connect_error', function (error) {
   }
 
 
-  alert('Could not stablish connection with the server');
+  alert.show()('Could not stablish connection with the server', 'error');
 });
 
 
@@ -66,7 +67,7 @@ socket.on('connect_error', function (error) {
 
 socket.on('disconnect', (reason) => {
   console.log('socket connection disconnected', reason);
-  alert('Disconnected from the server please check your internet connection');
+  alert.show()('Disconnected from the server please check your internet connection', 'info');
 });
 
 
@@ -79,7 +80,7 @@ socket.on('reconnect', (attemptNumber) => {
   const store = require('./store');
   USER(store.default.dispatch).checkUserSession();
 
-  alert('Server connection restablished');
+  alert.show()('Server connection restablished', 'success');
 });
 
 

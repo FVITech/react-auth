@@ -1,4 +1,5 @@
 import { server } from '../api';
+import { alert } from '../components/Alerts';
 import validate from '../methods/validate';
 import socket from '../socket';
 
@@ -52,11 +53,11 @@ const USER = (dispatch) => ({
 
   onSignIn: (credentials) => {
     if (!validate.email(credentials.email)) {
-      return alert('Invalid email. Please enter a valid email')
+      return alert.show()('Invalid email. Please enter a valid email', 'info');
     }
 
     if (!validate.password(credentials.password)) {
-      return alert('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters')
+      return alert.show()('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters', 'info');
     }
 
     return fetch(server + '/user-sign-in', {
@@ -77,29 +78,29 @@ const USER = (dispatch) => ({
         })
       }
       else {
-        alert(response.message);
+        alert.show()(response.message, 'info');
       }
     })
     .catch(err => {
-      alert(err.message);
+      alert.show()(err.message, 'error');
     })
   },
 
   onSignUp: (credentials) => {
     if (!validate.email(credentials.email)) {
-      return alert('Invalid email. Please enter a valid email')
+      return alert.show()('Invalid email. Please enter a valid email', 'info')
     }
 
     if (!validate.password(credentials.password)) {
-      return alert('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters')
+      return alert.show()('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters', 'info')
     }
 
     if (!credentials.name) {
-      return alert('Invalid name. Please enter a name')
+      return alert.show()('Invalid name. Please enter a name', 'info')
     }
 
     if (!credentials.birthday) {
-      return alert('Invalid age. Please enter a valid age')
+      return alert.show()('Invalid age. Please enter a valid age', 'info')
     }
 
     return fetch(server + '/user-sign-up', {
@@ -117,18 +118,18 @@ const USER = (dispatch) => ({
           return true;
         }
         else {
-          alert(response.message);
+          alert.show()(response.message, 'info');
           return false;
         }
       })
       .catch(err => {
-        alert(err.message);
+        alert.show()(err.message, 'error');
       })
   },
 
   onForgotPassword: (credentials) => {
     if (!validate.email(credentials.email)) {
-      return alert('Invalid email. Please enter a valid email')
+      return alert.show()('Invalid email. Please enter a valid email', 'info')
     }
 
     return fetch(server + '/user-password-recovery', {
@@ -146,22 +147,22 @@ const USER = (dispatch) => ({
           return true;
         }
         else {
-          alert(response.message);
+          alert.show()(response.message, 'info');
           return false;
         }
       })
       .catch(err => {
-        alert(err.message);
+        alert.show()(err.message, 'error');
       })
   },
 
   onResetPassword: (credentials, token) => {
     if (!validate.password(credentials.newPassword)) {
-      return alert('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters');
+      return alert.show()('Invalid password. Please make sure the password contains a lowercase letter, a capital letter, a number and a minimum of 6 characters', 'info');
     }
 
     if (credentials.newPassword !== credentials.newPasswordConfirmation) {
-      return alert('Passwords do not match. Please make sure to type the same password');
+      return alert.show()('Passwords do not match. Please make sure to type the same password', 'info');
     }
 
     return fetch(server + '/user-change-password/' + token, {
@@ -179,12 +180,12 @@ const USER = (dispatch) => ({
           return true;
         }
         else {
-          alert(response.message);
+          alert.show()(response.message, 'info');
           return false;
         }
       })
       .catch(err => {
-        alert(err.message);
+        alert.show()(err.message, 'error');
       })
   },
 
@@ -202,7 +203,6 @@ const USER = (dispatch) => ({
     })
       .then(response => response.json())
       .then(response => {
-        console.log(response);
         if (response.success) {
           dispatch({
             type: 'ON_UPDATE_USER',
@@ -210,11 +210,11 @@ const USER = (dispatch) => ({
           });
         }
         else {
-          alert(response.message);
+          alert.show()(response.message, 'info');
         }
       })
-      .catch(error => {
-        console.error(error);
+      .catch(err => {
+        alert.show()(err.message, 'error');
       });
   },
 
